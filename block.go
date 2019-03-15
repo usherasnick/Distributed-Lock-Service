@@ -43,7 +43,14 @@ func NewBlock(data string ,prevBlockHash []byte) *Block{
 		Data: []byte(data), //外部传入
 	}
 	//计算自己哈希值
-	newBlock.setHash()
+	//newBlock.setHash()
+	//在这里调用pow相关函数
+	pow:=NewProofOfWork(&newBlock)
+	nonce,hash :=pow.Run()
+	//将挖矿产生的数据赋值给区块
+	newBlock.Nonce=nonce
+	newBlock.Hash=hash
+
 
 
 	return &newBlock
