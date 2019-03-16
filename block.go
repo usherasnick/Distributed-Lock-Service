@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"crypto/sha256"
+	"encoding/gob"
+	"fmt"
+	"os"
 	"time"
 )
 
@@ -80,4 +84,46 @@ func (b *Block)setHash(){
 	//3. 将得到的哈希赋值给Hash字段
 	b.Hash = hash[:]   // ？？？？[32]byte -->>[]byte
 
+}
+//序列化:将结构转化成字节流，在网络上按字节传输。
+func (block *Block)Serialize() []byte {
+	//将block数据转换成字节流
+
+	var buffer bytes.Buffer
+	//创建一个编码器
+	encoder := gob.NewEncoder(&buffer)
+
+	//编码，将block编码成buffer
+	err := encoder.Encode(block)
+
+	if err != nil {
+		fmt.Println("encode failed!", err)
+		os.Exit(1)
+	}
+
+	return buffer.Bytes()
+}
+// 反序列化:将接受到的字节流转换成目标结构。
+func Deserialize(data []byte) Block {
+	var block Block
+	var buffer bytes.Buffer
+
+	//将data写入buffer
+	_, err := buffer.Write(data)
+	if err != nil {
+		fmt.Println("buffer.Read failed!", err)
+		os.Exit(1)
+	}
+
+	//创建decoder
+	decoder := gob.NewDecoder(&buffer)
+
+	//将buffer数据转换成block
+	err = decoder.Decode(&block)
+	if err != nil {
+		fmt.Println("decode failed!", err)
+		os.Exit(1)
+	}
+
+	return block
 }
