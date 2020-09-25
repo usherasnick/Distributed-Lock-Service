@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  cassandra:
+    image: cassandra:3.11.5
+    container_name: cassandra
+    hostname: cassandra
+    ports:
+      - "9042:9042" # CQL native transport port
+    environment:
+      MAX_HEAP_SIZE: "256M"
+      HEAP_NEWSIZE: "128M"
+      CASSANDRA_BROADCAST_ADDRESS: "cassandra"
+    volumes:
+      - ~/cassandra/node:/var/lib/cassandra

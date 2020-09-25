@@ -1,0 +1,53 @@
+version: "3.7"
+services:
+  ################################################################
+  # The Cassandra Cluster
+  ################################################################
+  # use "env CQLSH_HOST=cassandra_node0 && cqlsh" to connect to server
+  cassandra_node0:
+    image: cassandra:3.11.5
+    container_name: cassandra_node0
+    hostname: cassandra_node0
+    ports:
+      - "17000:7000" # Internode communication (not used if TLS enabled)
+      - "19042:9042" # CQL native transport port
+    environment:
+      MAX_HEAP_SIZE: "256M"
+      HEAP_NEWSIZE: "128M"
+      CASSANDRA_BROADCAST_ADDRESS: "cassandra_node0"
+    volumes:
+      - ~/cassandra/node00:/var/lib/cassandra
+
+  cassandra_node1:
+    image: cassandra:3.11.5
+    container_name: cassandra_node1
+    hostname: cassandra_node1
+    depends_on:
+      - cassandra_node0
+    ports:
+      - "17001:7000"
+      - "19043:9042"
+    environment:
+      MAX_HEAP_SIZE: "256M"
+      HEAP_NEWSIZE: "128M"
+      CASSANDRA_BROADCAST_ADDRESS: "cassandra_node1"
+      CASSANDRA_SEEDS: "cassandra_node0"  
+    volumes:
+      - ~/cassandra/node01:/var/lib/cassandra
+    
+  cassandra_node2:
+    image: cassandra:3.11.5
+    container_name: cassandra_node2
+    hostname: cassandra_node2
+    depends_on:
+      - cassandra_node0
+    ports:
+      - "17002:7000"
+      - "19044:9042"
+    environment:
+      MAX_HEAP_SIZE: "256M"
+      HEAP_NEWSIZE: "128M"
+      CASSANDRA_BROADCAST_ADDRESS: "cassandra_node2"
+      CASSANDRA_SEEDS: "cassandra_node0"
+    volumes:
+      - ~/cassandra/node02:/var/lib/cassandra
