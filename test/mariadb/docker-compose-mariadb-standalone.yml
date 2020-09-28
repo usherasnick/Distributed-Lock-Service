@@ -1,0 +1,18 @@
+version: "3.7"
+services:
+  # mariadb数据库
+  db:
+    image: mariadb:10.3
+    ports:
+      - 13306:3306
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: "Pwd123!@"
+      MYSQL_USER: "tester"
+      MYSQL_PASS: "123456"
+
+  # admin管理后台
+  admin:
+    image: adminer:4.7-standalone
+    ports:
+      - 18080:8080

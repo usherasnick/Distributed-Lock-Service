@@ -1,0 +1,18 @@
+#
+# The MySQL Server configuration file.
+#
+# For explanations see
+# https://dev.mysql.com/doc/refman/8.0/en/server-system-variable-reference.html
+
+[mysqld]
+default-authentication-plugin  = mysql_native_password
+character-set-server           = utf8mb4
+collation-server               = utf8mb4_unicode_ci
+#bind-address                   = 192.168.0.2
+log-bin                        = mysql-binlog
+server-id                      = 1
+expire_logs_days               = 10
+max_binlog_size                = 104857600
+binlog_format                  = row
+sync_binlog                    = 1
+innodb_flush_log_at_trx_commit = 1
