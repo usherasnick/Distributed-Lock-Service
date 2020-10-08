@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+  redis:
+    image: redis:6.2-rc-alpine3.12
+    ports:
+      - 16379:6379
+    command: redis-server --requirepass sOmE_sEcUrE_pAsS
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    volumes:
+      - $PWD/conf.d/redis.conf:/usr/local/etc/redis/redis.conf
+      - ~/redis/data:/var/lib/redis
