@@ -1,0 +1,38 @@
+version: "3.7"
+services:
+  ################################################################
+  # The Zookeeper Cluster
+  ################################################################  
+  zk_node0:
+    image: zookeeper:3.5
+    hostname: zk_node0
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zk_node1:2888:3888;2181 server.3=zk_node2:2888:3888;2181
+    volumes:
+      - ~/zookeeper/node00/data:/data
+      - ~/zookeeper/node00/datalog:/datalog
+  zk_node1:
+    image: zookeeper:3.5
+    hostname: zk_node1
+    ports:
+      - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zk_node0:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zk_node2:2888:3888;2181
+    volumes:
+      - ~/zookeeper/node01/data:/data
+      - ~/zookeeper/node01/datalog:/datalog
+  zk_node2:
+    image: zookeeper:3.5
+    hostname: zk_node2
+    ports:
+      - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zk_node0:2888:3888;2181 server.2=zk_node1:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+    volumes:
+      - ~/zookeeper/node02/data:/data
+      - ~/zookeeper/node02/datalog:/datalog
