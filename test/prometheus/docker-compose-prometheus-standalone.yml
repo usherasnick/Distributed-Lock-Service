@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  ## View Prometheus Dashboard
+  # http://localhost:19000/graph
+  prometheus:
+    image: prom/prometheus:v2.27.1
+    ports:
+      - 19000:9090
+    volumes:
+      - $PWD/conf.d/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
