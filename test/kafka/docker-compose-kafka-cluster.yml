@@ -1,0 +1,108 @@
+version: "3.7"
+services:
+  ################################################################
+  # The Zookeeper Cluster
+  ################################################################  
+  zk_node0:
+    image: zookeeper:3.5
+    hostname: zk_node0
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181 server.2=zk_node1:2888:3888;2181 server.3=zk_node2:2888:3888;2181
+    volumes:
+      - ~/zookeeper/node00/data:/data
+      - ~/zookeeper/node00/datalog:/datalog
+  zk_node1:
+    image: zookeeper:3.5
+    hostname: zk_node1
+    ports:
+      - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zk_node0:2888:3888;2181 server.2=0.0.0.0:2888:3888;2181 server.3=zk_node2:2888:3888;2181
+    volumes:
+      - ~/zookeeper/node01/data:/data
+      - ~/zookeeper/node01/datalog:/datalog
+  zk_node2:
+    image: zookeeper:3.5
+    hostname: zk_node2
+    ports:
+      - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zk_node0:2888:3888;2181 server.2=zk_node1:2888:3888;2181 server.3=0.0.0.0:2888:3888;2181
+    volumes:
+      - ~/zookeeper/node02/data:/data
+      - ~/zookeeper/node02/datalog:/datalog
+  
+  ################################################################
+  # The Kafka Cluster
+  ################################################################       
+  kafka_node0:
+    image: wurstmeister/kafka:2.11-1.1.1
+    ports:
+      - "9091:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: "127.0.0.1" # localhost ip
+      KAFKA_ZOOKEEPER_CONNECT: "zk_node0:2181,zk_node1:2181,zk_node2:2181"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      KAFKA_CREATE_TOPICS: "topic-1:24:3,topic-2:24:3,topic-3:24:3" # your topics
+      KAFKA_COMPRESSION_TYPE: "producer"
+      KAFKA_MESSAGE_MAX_BYTES: 200000
+      KAFKA_LOG_DIRS: "/var/lib/kafka0/disk00"
+      KAFKA_LOG_CLEANUP_POLICY: "delete"
+      kAFKA_LOG_CLEANER_ENABLE: "false"
+      KAFKA_LOG_SEGMENT_BYTES: 209715200
+      KAFKA_LOG_SEGMENT_DELETE_DELAY_MS: 60000
+      KAFKA_LOG_RETENTION_BYTES: 209715200
+      KAFKA_LOG_RETENTION_HOURS: 24
+    volumes:
+      - ~/kafka/node00/disk00:/var/lib/kafka0/disk00
+      - /var/run/docker.sock:/var/run/docker.sock
+  kafka_node1:
+    image: wurstmeister/kafka:2.11-1.1.1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: "127.0.0.1" # localhost ip
+      KAFKA_ZOOKEEPER_CONNECT: "zk_node0:2181,zk_node1:2181,zk_node2:2181"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      KAFKA_CREATE_TOPICS: "topic-1:24:3,topic-2:24:3,topic-3:24:3" # your topics
+      KAFKA_COMPRESSION_TYPE: "producer"
+      KAFKA_MESSAGE_MAX_BYTES: 200000
+      KAFKA_LOG_DIRS: "/var/lib/kafka0/disk00"
+      KAFKA_LOG_CLEANUP_POLICY: "delete"
+      kAFKA_LOG_CLEANER_ENABLE: "false"
+      KAFKA_LOG_SEGMENT_BYTES: 209715200
+      KAFKA_LOG_SEGMENT_DELETE_DELAY_MS: 60000
+      KAFKA_LOG_RETENTION_BYTES: 209715200
+      KAFKA_LOG_RETENTION_HOURS: 24
+    volumes:
+      - ~/kafka/node01/disk00:/var/lib/kafka0/disk00
+      - /var/run/docker.sock:/var/run/docker.sock
+  kafka_node2:
+    image: wurstmeister/kafka:2.11-1.1.1
+    ports:
+      - "9093:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: "127.0.0.1" # localhost ip
+      KAFKA_ZOOKEEPER_CONNECT: "zk_node0:2181,zk_node1:2181,zk_node2:2181"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      KAFKA_CREATE_TOPICS: "topic-1:24:3,topic-2:24:3,topic-3:24:3" # your topics
+      KAFKA_COMPRESSION_TYPE: "producer"
+      KAFKA_MESSAGE_MAX_BYTES: 200000
+      KAFKA_LOG_DIRS: "/var/lib/kafka0/disk00"
+      KAFKA_LOG_CLEANUP_POLICY: "delete"
+      kAFKA_LOG_CLEANER_ENABLE: "false"
+      KAFKA_LOG_SEGMENT_BYTES: 209715200
+      KAFKA_LOG_SEGMENT_DELETE_DELAY_MS: 60000
+      KAFKA_LOG_RETENTION_BYTES: 209715200
+      KAFKA_LOG_RETENTION_HOURS: 24
+    volumes:
+      - ~/kafka/node02/disk00:/var/lib/kafka0/disk00
+      - /var/run/docker.sock:/var/run/docker.sock
