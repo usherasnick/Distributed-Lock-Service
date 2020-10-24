@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  db:
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: "Pwd123!@"
+      MYSQL_DATABASE: "wordpress_db"
+      MYSQL_USER: "wordpress_usr"
+      MYSQL_PASSWORD: "wordpress_pwd"
+    volumes:
+      - ~/mysql/data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:5.7
+    ports:
+      - 18080:80
+    environment:
+      WORDPRESS_DB_HOST: "db"
+      WORDPRESS_DB_USER: "wordpress_usr"
+      WORDPRESS_DB_PASSWORD: "wordpress_pwd"
+      WORDPRESS_DB_NAME: "wordpress_db"
+    volumes:
+      - ./languages:/var/www/html/wp-content/languages
